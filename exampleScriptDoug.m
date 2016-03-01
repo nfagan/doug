@@ -1,6 +1,6 @@
 % example script - this section loads in data and determines which types of
 % images to analyze
-
+startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
 umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
 
@@ -64,5 +64,9 @@ end
 
 %% construct matrix
 
-M = genTable(saveData,'roi','raw counts'); %'roi' or 'whole face'; 'proportion', 'raw counts', or 'average duration'    
+M = genTable(saveData,'roi','average duration'); %'roi' or 'whole face'; 'proportion', 'raw counts', 'average duration', or 'n images'
+
+Limits = [0 20000];
+
+barPlots(M,'per stimulus','people',allTrialTypes);
     
