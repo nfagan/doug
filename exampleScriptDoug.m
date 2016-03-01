@@ -66,7 +66,7 @@ end
 
 M = genTable(saveData,'roi','average duration'); %'roi' or 'whole face'; 'proportion', 'raw counts', 'average duration', or 'n images'
 
-Limits = [0 20000];
+Limits = [0 15e3];
 
-barPlots(M,'per stimulus','people',allTrialTypes);
+barPlots(M,'per stimulus','people',allTrialTypes,Limits);
     
