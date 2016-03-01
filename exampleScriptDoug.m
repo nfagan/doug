@@ -1,10 +1,17 @@
-% example script - this section loads in data and determines which types of
-% images to analyze
+% --------------------------------
+% load in files
+% --------------------------------
 startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
 umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
 
-%%%% define global parameters
+% --------------------------------
+% define global parameters
+% --------------------------------
+
+global toExamine;
+
+toExamine = 'average duration'; %'proportion', 'raw counts', 'average duration', or 'n images'
 
 roiPos.minX = -10e3;
 roiPos.maxX = 10e3;
@@ -20,9 +27,11 @@ allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
 allBlockEnds = allBlockStarts(:) + 60e4;
 
 allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
-% allTrialTypes = {'all'};
 
-%%%%
+% --------------------------------
+% get all relevant data
+% --------------------------------
+
 saveData = cell(1,1);
 for j = 1:length(allTrialTypes);
     
@@ -57,16 +66,18 @@ for j = 1:length(allTrialTypes);
             saveData{step,j} = {roiData,wholeFaceData};
             step = step+1;
         
-        end        
-    
+        end           
     end
 end
 
-%% construct matrix
+%% 
+% --------------------------------
+% construct matrix and plot
+% --------------------------------
 
-M = genTable(saveData,'roi','average duration'); %'roi' or 'whole face'; 'proportion', 'raw counts', 'average duration', or 'n images'
+M = genTable(saveData,'roi',toExamine); 
 
 Limits = [0 15e3];
 
-barPlots(M,'per stimulus','people',allTrialTypes,Limits);
+barPlots(M,'all',allTrialTypes);
     
