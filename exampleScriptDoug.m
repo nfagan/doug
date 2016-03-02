@@ -4,14 +4,16 @@
 
 startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
 
-global runGroups;
+global drugTypes;
+global dosages;
 global toExamine;
 global allTrialTypes;
 global allBlockStarts;
 global allBlockEnds;
 global allPos;
 
-runGroups = {'Coopola0.5N','2','3'};
+drugTypes = {'OTN','N'};
+dosages = {'.5','.1'};
 toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
@@ -31,22 +33,25 @@ allBlockEnds = allBlockStarts(:) + 60e4;
 
 allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
 % if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
-M = cell(1,length(runGroups));
-for k = 1:length(runGroups);
-% --------------------------------
-% load in files
-% --------------------------------
-umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
-[allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
-% --------------------------------
-% get all relevant data
-% --------------------------------
-saveData = getSaveData(allTimes,allEvents);
-% --------------------------------
-% construct matrix and plot
-% --------------------------------
-M{k} = genTable(saveData,region);
+M = cell(length(drugTypes),length(dosages));
 
+for j = 1:length(drugTypes);
+    
+    for k = 1:length(dosages);
+    % --------------------------------
+    % load in files
+    % --------------------------------
+    umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
+    [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
+    % --------------------------------
+    % get all relevant data
+    % --------------------------------
+    saveData = getSaveData(allTimes,allEvents);
+    % --------------------------------
+    % construct matrix and plot
+    % --------------------------------
+    M{j,k} = genTable(saveData,region);
+    end
 end
 
 %%
@@ -57,4 +62,4 @@ Limits = [0 40];
 
 % linePlots(M,'xAxis','dose','allStimuli',0);
 
-plotStim(M,'xAxis','time','lineType','per drug','limits',Limits);
+plotStim(M,'xAxis','dose','lineType','per stim');

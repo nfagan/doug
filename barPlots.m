@@ -25,12 +25,13 @@ function barPlots(M,varargin)
 % --------------------------------
 
 global toExamine;
-global runGroups;
+global drugTypes;
+global dosages;
 
 if iscell(M);
-    extM = M{1};
+    extM = M{1,1};
     M = extM;
-    warning('Only examining %s (M{1}) files!',char(runGroups{1}));
+    warning('Only examining %s %s (M{1}) files!',char(drugTypes{1}),char(dosages{1}));
 end
 
 cases = {'per stimulus','per block','all'};
