@@ -58,8 +58,8 @@ end
 
 Limits = [0 40];
 
-% barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
+barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 
 % linePlots(M,'xAxis','dose','allStimuli',0);
 
-plotStim(M,'xAxis','dose','lineType','per stim');
+% plotStim(M,'xAxis','dose','lineType','per stim');
