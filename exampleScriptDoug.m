@@ -9,24 +9,28 @@ umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time
 % define global parameters
 % --------------------------------
 
+runGroups = {'Coopola0.5N','Coppola1N'};
+
 global toExamine;
 
-toExamine = 'average duration'; %'proportion', 'raw counts', 'average duration', or 'n images'
+toExamine = 'proportion'; %'proportion', 'raw counts', 'average duration', or 'n images'
 
-roiPos.minX = -10e3;
-roiPos.maxX = 10e3;
-roiPos.minY = -10e3;
-roiPos.maxY = 10e3;
+roiPos.minX = 620;
+roiPos.maxX = 980;
+roiPos.minY = 345;
+roiPos.maxY = 495;
 
-wholePos.minX = -10e3;
-wholePos.maxX = 10e3;
-wholePos.minY = -10e3;
-wholePos.maxY = 10e3;
+wholePos.minX = 600;
+wholePos.maxX = 1000;
+wholePos.minY = 250;
+wholePos.maxY = 650;
 
 allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
 allBlockEnds = allBlockStarts(:) + 60e4;
 
 allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
+% if toExamine is 'normalized proportion', make sure first allTrialTypes is
+% 'scrambled
 
 % --------------------------------
 % get all relevant data
@@ -75,9 +79,9 @@ end
 % construct matrix and plot
 % --------------------------------
 
-M = genTable(saveData,'roi',toExamine); 
+M = genTable(saveData,'roi',toExamine);
 
 Limits = [0 15e3];
 
-barPlots(M,'all',allTrialTypes);
+barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
     

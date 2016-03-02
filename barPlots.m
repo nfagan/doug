@@ -67,12 +67,25 @@ else
 end
 
 % --------------------------------
+% get rid of scrambled images if plotting normalized proportion
+% --------------------------------
+
+if strcmp(toExamine,'normalized proportion');
+    M = M(:,2:end);
+end
+
+% --------------------------------
 % parse inputs and plot accordingly
 % --------------------------------
 
 switch whatToPlot
     case 'all'   
         allTrialTypes = varargin{2};
+        
+        if strcmp(toExamine,'normalized proportion');
+            allTrialTypes{1} = [];
+            allTrialTypes = remEmpty(allTrialTypes);
+        end
         
         toXLabel = 'Block Number';
         
@@ -84,6 +97,12 @@ switch whatToPlot
         
         wantedImage = varargin{2};
         allTrialTypes = varargin{3};
+        
+        if strcmp(toExamine,'normalized proportion');
+            allTrialTypes{1} = [];
+            allTrialTypes = remEmpty(allTrialTypes);
+        end
+        
         inds = 1:length(allTrialTypes);
         d = strcmp(wantedImage,allTrialTypes);
         
@@ -101,7 +120,13 @@ switch whatToPlot
     case 'per block'
         
         blockNumber = varargin{2};
-        allTrialTypes = varargin{3};        
+        allTrialTypes = varargin{3};   
+        
+        if strcmp(toExamine,'normalized proportion');
+            allTrialTypes{1} = [];
+            allTrialTypes = remEmpty(allTrialTypes);
+        end
+        
         bar(M(blockNumber,:),'k');
         set(gca,'xticklabel',allTrialTypes);
         
