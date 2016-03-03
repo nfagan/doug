@@ -63,4 +63,4 @@ limits = [];
 
 % barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 
-M2 = reformatData(M,'lineType','per stim','xAxis','time','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
+M2 = reformatData(M,'lineType','per drug','xAxis','time','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'

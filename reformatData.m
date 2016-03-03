@@ -205,9 +205,9 @@ if strcmp(params.lineType,'per stim') && strcmp(params.xAxis,'dose');
         M2{1}(i,:) = M{i};
     end
     M = M2;
-    plot(M{1});
+    plot(1:size(M,2),M{1});
     set(gca,'XTick',(1:size(M,2)));
-    set(gca,'XTickLabel',{'small','medium','large'});
+    set(gca,'XTickLabel',dosages);
     xlabel('Dosage');
     ylabel(toYLabel);
     
