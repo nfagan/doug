@@ -1,8 +1,8 @@
-% --------------------------------
-% define global parameters
-% --------------------------------
-
 startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
+umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
+% --------------------------------
+% define global variables
+% --------------------------------
 
 global drugTypes;
 global dosages;
@@ -12,12 +12,19 @@ global allBlockStarts;
 global allBlockEnds;
 global allPos;
 
+% --------------------------------
+% master inputs
+% --------------------------------
+
 monkey = 'Kurosawa';
 drugTypes = {'OT','OTN','N','Saline'};
 dosages = {'small','medium','large'};
 
 toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
+
+lineType = 'per drug';
+xAxis = 'dose';
 
 roiPos.minX = 620;
 roiPos.maxX = 980;
@@ -35,15 +42,18 @@ allBlockEnds = allBlockStarts(:) + 60e4;
 
 allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
 % if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
-M = cell(length(drugTypes),length(dosages));
 
+% --------------------------------
+% analysis portion
+% --------------------------------
+
+M = cell(length(drugTypes),length(dosages));
 for j = 1:length(drugTypes);
     
     for k = 1:length(dosages);
     % --------------------------------
     % load in files
     % --------------------------------
-    umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 %     umbrellaDirectory = getUmbrDir(monkey,drugTypes{j},dosages{k});
     [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
     % --------------------------------
@@ -58,9 +68,20 @@ for j = 1:length(drugTypes);
 end
 
 %%
-
+% --------------------------------
+% plot
+% --------------------------------
 limits = [];
-
 % barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
+M2 = reformatData(M,'lineType',lineType,'xAxis',xAxis,'limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
 
-M2 = reformatData(M,'lineType','per drug','xAxis','time','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
+
+
+
+
+
+
+
+
+
+%
