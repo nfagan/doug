@@ -12,8 +12,10 @@ global allBlockStarts;
 global allBlockEnds;
 global allPos;
 
-drugTypes = {'OT','OTN','N'};
+monkey = 'Kurosawa';
+drugTypes = {'OT','OTN','N','Saline'};
 dosages = {'small','medium','large'};
+
 toExamine = 'proportion'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
@@ -61,4 +63,4 @@ limits = [];
 
 % barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 
-M2 = reformatData(M,'lineType','per drug','xAxis','dose','limits',limits);
+M2 = reformatData(M,'lineType','per stim','xAxis','time','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'

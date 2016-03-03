@@ -1,3 +1,22 @@
+% reformatData.m - function for reformatting and plotting M data generated
+% by genTable.m.
+% 
+%   With this function, you can specify what each line of the line graph
+%   corresponds to, and what's on the x-axis. All possible inputs are:
+%
+%       'lineType'
+%           'per stim' -- plots with each line as a type of image
+%               OR
+%           'per drug' -- plots with each line as a type of drug
+%       'xAxis'
+%           'dose' -- each x coordinate is a dosage of drug
+%           'time' -- each x coordinate is a block number
+%       'limis'
+%           [a b] -- specify a two element vectory where a < b. This
+%           adjusts the y limits of the plots
+%
+
+
 function outputM = reformatData(M,varargin)
 
 % --------------------------------
