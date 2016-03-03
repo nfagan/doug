@@ -16,7 +16,7 @@ monkey = 'Kurosawa';
 drugTypes = {'OT','OTN','N','Saline'};
 dosages = {'small','medium','large'};
 
-toExamine = 'proportion'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
+toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
 roiPos.minX = 620;
@@ -44,7 +44,7 @@ for j = 1:length(drugTypes);
     % load in files
     % --------------------------------
     umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
-%     umbrellaDirectory = getUmbrDir(drugTypes{j},dosages{k});
+%     umbrellaDirectory = getUmbrDir(monkey,drugTypes{j},dosages{k});
     [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
     % --------------------------------
     % get all relevant data
@@ -63,4 +63,4 @@ limits = [];
 
 % barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 
-M2 = reformatData(M,'lineType','per stim','xAxis','time','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
+M2 = reformatData(M,'lineType','per drug','xAxis','dose','limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
