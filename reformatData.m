@@ -219,25 +219,24 @@ end
 
 if strcmp(params.lineType,'per drug') && strcmp(params.xAxis,'time'); 
     for i = 1:size(M{1},2);
-    oneImage = zeros(size(M,1),size(M{1},1));
-    for j = 1:size(M,1);
-        oneImage(j,:) = M{j}(:,i);
-    end    
-    subplot(size(M{1},2),1,i);
-    plot(oneImage');
-    
-    title(char(allTrialTypes{i}));
-    if i == round(size(M{1},2)/2);
-        ylabel(toYLabel);    
+        oneImage = zeros(size(M,1),size(M{1},1));
+        for j = 1:size(M,1);
+            oneImage(j,:) = M{j}(:,i);
+        end    
+        subplot(size(M{1},2),1,i);
+        plot(oneImage');
+
+        title(char(allTrialTypes{i}));
+        if i == round(size(M{1},2)/2);
+            ylabel(toYLabel);    
+        end
+
+        if ~isempty(params.limits);
+            ylim(params.limits);
+        end      
+
     end
-
-    if ~isempty(params.limits);
-        ylim(params.limits);
-    end      
-
-end
 legend(drugTypes);
-
 xlabel('Block Number');
 end
 
@@ -250,7 +249,7 @@ if strcmp(params.lineType,'per drug') && strcmp(params.xAxis,'dose');
             end
         end
         subplot(size(M{1},2),1,i);
-        plot(oneImage');        
+        plot(1:size(M,2),oneImage');        
         title(char(allTrialTypes{i}));
         set(gca,'XTick',(1:size(M,2)));
         if i == round(size(M{1},2)/2);
@@ -264,7 +263,7 @@ if strcmp(params.lineType,'per drug') && strcmp(params.xAxis,'dose');
     end
 legend(drugTypes);
 xlabel('Dosage');
-set(gca,'XTickLabel',{'small','medium','large'});
+set(gca,'XTickLabel',dosages);
 end                        
         
 hold off;
