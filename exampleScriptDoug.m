@@ -12,9 +12,9 @@ global allBlockStarts;
 global allBlockEnds;
 global allPos;
 
-drugTypes = {'OTN','N'};
-dosages = {'.5','.1'};
-toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
+drugTypes = {'OT','OTN','N'};
+dosages = {'small','medium','large'};
+toExamine = 'proportion'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
 roiPos.minX = 620;
@@ -42,6 +42,7 @@ for j = 1:length(drugTypes);
     % load in files
     % --------------------------------
     umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
+%     umbrellaDirectory = getUmbrDir(drugTypes{j},dosages{k});
     [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
     % --------------------------------
     % get all relevant data
@@ -56,10 +57,8 @@ end
 
 %%
 
-Limits = [0 40];
+limits = [];
 
-barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
+% barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 
-% linePlots(M,'xAxis','dose','allStimuli',0);
-
-% plotStim(M,'xAxis','dose','lineType','per stim');
+M2 = reformatData(M,'lineType','per drug','xAxis','dose','limits',limits);

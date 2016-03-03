@@ -95,40 +95,10 @@ hold on;
 % --------------------------------
 
 switch params.xAxis;
-
+    
     case 'dose'
-
-        storeMeans = zeros(size(M,1),size(M,2));
-        for k = 1:size(M,1);
-            for j = 1:size(M,2);
-                storeMeans(k,:) = mean(M{k,j}(indMatrix));
-            end
-        end
-
-        plot(storeMeans);
-
-        set(gca,'XTick',1:1:length(M));
-        set(gca,'XTickLabels',{'Small','Medium','Large'});
-        xlabel('Dosage');
-
-    case 'time'
         
-    for j = 1:size(M,1),
-        storeMeans = [];
-        for i = 1:size(M,2);
-            d = reshape(M{i}(indMatrix),size(M{i}(indMatrix)));
-            if i == 1;
-                storeMeans = d;
-            else                
-            storeMeans = storeMeans + d;
-            end
-        end
-        storeMeans = storeMeans./size(M,2);
-        plot(storeMeans);
-    end
-
-    xlabel('Block Number');
-end        
+        
 
 % --------------------------------
 % add legend
