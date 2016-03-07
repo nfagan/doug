@@ -26,6 +26,10 @@ switch drugType
         sm = ''; % make the same for each dosage
         md = '';
         lg = '';
+    case 'OT_test'
+        sm = '12 IU'; %folder names ... fill in
+        md = '24 IU';
+        lg = '48 IU';
 end
 
 switch dosage
@@ -38,43 +42,3 @@ switch dosage
     case 'large'
         umbrellaDirectory = fullfile(monkDir,drugType,lg);
 end
-        
-        
-
-
-
-% 
-% 
-% 
-% 
-% 
-% switch drugType
-%     case 'OTN'
-%         switch dosage
-%             case '.5N'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case '1N'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case 'all'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%         end
-%                 
-%     case 'N'
-%         switch dosage
-%             case 'd'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case 'd'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case 'all'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%         end
-%     case 'Saline'
-%         switch dosage
-%             case 'd'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case 'd'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%             case 'all'
-%                 umbrellaDirectory = fullfile(monkDir,'folderName');
-%         end
-% end

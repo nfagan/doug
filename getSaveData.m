@@ -1,6 +1,5 @@
-function saveData = getSaveData(allTimes,allEvents)
+function saveData = getSaveData(allTimes,allEvents,allTrialTypes)
 
-global allTrialTypes;
 global allBlockStarts;
 global allBlockEnds;
 global allPos;

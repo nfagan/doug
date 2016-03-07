@@ -17,7 +17,7 @@ global allPos;
 % --------------------------------
 
 monkey = 'Coppola';
-drugTypes = {'OTN'};
+drugTypes = {'OTN','OT_test'};
 dosages = {'small','medium','large'};
 
 toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
@@ -47,7 +47,12 @@ allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define t
 % analysis portion
 % --------------------------------
 
-M = cell(length(drugTypes),length(dosages));
+% M = cell(length(drugTypes),length(dosages));
+M = [];
+
+for i = 1:length(allTrialTypes);
+    trialType = {allTrialTypes{i}};
+
 for j = 1:length(drugTypes);
     
     for k = 1:length(dosages);
@@ -59,13 +64,19 @@ for j = 1:length(drugTypes);
     % --------------------------------
     % get all relevant data
     % --------------------------------
-    saveData = getSaveData(allTimes,allEvents);
+    saveData = getSaveData(allTimes,allEvents,trialType);
     % --------------------------------
     % construct matrix and plot
     % --------------------------------
-    M{j,k} = genTable(saveData,region);
+    M{i}{j,k} = genTable(saveData,region);
     end
 end
+
+end
+
+%%
+
+storePerImage = newPlot(M,'lineType','per stim','xAxis','time','treatNaNs','meanReplace');
 
 %%
 % --------------------------------
