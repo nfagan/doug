@@ -1,5 +1,6 @@
 function [storePerImage,d] = newPlot(M,varargin)
 
+global toExamine;
 global drugTypes;
 global dosages;
 global allTrialTypes;
@@ -7,10 +8,27 @@ global allTrialTypes;
 params = struct(... %default values of params struct
     'lineType','per stim', ...
     'xAxis','dose', ...
-    'treatNaNs','error' ... 
+    'treatNaNs',{'default'}, ...
+    'limits',[], ...
+    'doseNames',[] ...
     );    
 
 params = structInpParse(params,varargin);
+
+%%% fix treatNaNs if necessary
+
+if ~iscell(params.treatNaNs);
+    params.treatNaNs = {params.treatNaNs};
+end
+
+%%% add warning for meanReplace
+
+if strcmp(params.treatNaNs,'meanReplace');
+    warning(['Replacing missing values with mean values isn''t recommended.' ...
+        , ' This feature is mainly for troubleshooting purposes - to confirm' ...
+        , ' that plotting over time is working as it should. You should probably' ...
+        , ' change ''meanReplace'' to ''default''.']);
+end
 
 M2 = M;
 
@@ -22,9 +40,9 @@ for i = 1:length(M2); % for each image ...
         for j = 1:size(M2{1},1);
             for k = 1:size(M2{1},2);                
                 drugDose = M2{i}{j,k};                
-                if sum(isnan(drugDose)) > 1;
+                if sum(isnan(drugDose)) >= 1;
                     
-                    warning(['\nIMAGES: %s\nDOSE: %s\nDRUG: %s\nThese trials have %d blocks of empty data.' ...
+                    warning(['\nIMAGES: %s\nDOSE: %s\nDRUG: %s\nThese trials have %d block(s) of empty data.' ...
                         , ' Data will be averaged with NaNs removed.'],...
                         char(allTrialTypes{i}),dosages{k},drugTypes{j},sum(isnan(drugDose)));
                     
@@ -53,19 +71,25 @@ for i = 1:length(M2); % for each image ...
                 checkNans = isnan(drugDose(:,k));
                 
                 if any(checkNans);
-                    if strcmp(params.treatNaNs,'meanReplace');
-                        tempMean = nanmean(drugDose(:,k));
-                        drugDose(checkNans,k) = tempMean;
-                    elseif strcmp(params.treatNaNs,'zeroReplace');
-                        drugDose(checkNans,k) = 0;
-                    else
-                        if strcmp(params.treatNaNs,'error');
-                            error(['\nIMAGES: %s\nDOSE: %s\nDRUG: %s\nThese trials have %d blocks of empty data.' ...
-                        , ' Cannot plot across time with these images!'],...
-                        char(allTrialTypes{i}),dosages{k},drugTypes{j},sum(isnan(drugDose(:,k))));
-                    
+                    if sum(checkNans) < length(checkNans)
+                        if strcmp(params.treatNaNs{1},'meanReplace');
+                            tempMean = nanmean(drugDose(:,k));
+                            drugDose(checkNans,k) = tempMean;
+                        elseif strcmp(params.treatNaNs{1},'valReplace');
+                            drugDose(checkNans,k) = params.treatNaNs{2};
+                        else
+                            if strcmp(params.treatNaNs{1},'default');
+                                error(['\nIMAGES: %s\nDOSE: %s\nDRUG: %s\nThese trials have %d block(s) of empty data.' ...
+                            , ' Cannot plot across time with these images!'],...
+                            char(allTrialTypes{i}),dosages{k},drugTypes{j},sum(isnan(drugDose(:,k))));
+
+                            end
                         end
-                    end
+                    else
+                        error(['\nIMAGES: %s\nDOSE: %s\nDRUG: %s\nThese trials have all %d blocks of empty data.' ...
+                            , ' Cannot plot across time with these images, nor can values be replaced!'],...
+                            char(allTrialTypes{i}),dosages{k},drugTypes{j},sum(isnan(drugDose(:,k))));
+                    end                        
                 end            
             end
             crossDose = nanmean(drugDose,2);
@@ -84,37 +108,85 @@ for i = 1:length(M2); % for each image ...
 
 end
 
-if strcmp(params.lineType,'per stim') && strcmp(params.xAxis,'dose');
+% --------------------------------
+% first get labels, etc.
+% --------------------------------
+
+switch toExamine
+    case 'average duration'
+        toYLabel = 'Average Duration of Fixation Event (ms)';
+    case 'proportion'
+        toYLabel = 'Proportion of Fixations ROI : Whole Face';
+    case 'raw counts'
+        toYLabel = 'Number of Fixations';
+    case 'n images'
+        toYLabel = 'Number of Images Seen';
+end
+
+% --------------------------------
+% plot
+% --------------------------------
+
+if strcmp(params.lineType,'per stim')
+    hold on;
     for i = 1:length(storePerImage);
-        plot(storePerImage{i}')
+        if strcmp(params.xAxis,'dose');
+            plot(mean(storePerImage{i})');
+            set(gca,'xtick',1:length(dosages));
+            if ~isempty(params.doseNames) && length(drugTypes) == 1;
+                set(gca,'xticklabel',params.doseNames);
+            else                        
+                set(gca,'xticklabel',dosages);
+            end            
+            xlabel('Dose');
+        elseif strcmp(params.xAxis,'time');
+            plot(storePerImage{i});
+            xlabel('Block Number');
+        end
     end;
+    legend(allTrialTypes);
+    ylabel(toYLabel);
+    
+    if ~isempty(params.limits);
+        ylim(params.limits);
+    end
+    
 end
 
-if strcmp(params.lineType,'per stim') && strcmp(params.xAxis,'time');
+if strcmp(params.lineType,'per drug');
+    hold on;
+    for i = 1:length(storePerImage);
+        oneImage = storePerImage{i};
+        subplot(length(storePerImage),1,i);
+            if strcmp(params.xAxis,'dose');
+                plot(oneImage');
+                set(gca,'xtick',1:length(dosages));
+                if i == length(storePerImage);
+                    xlabel('Dose');
+                    if ~isempty(params.doseNames) && length(drugTypes) == 1;
+                        set(gca,'xticklabel',params.doseNames);
+                    else                        
+                        set(gca,'xticklabel',dosages);
+                    end
+                end
+            elseif strcmp(params.xAxis,'time');
+                plot(oneImage);
+                if i == length(storePerImage);
+                    xlabel('Block Number');
+                end
+            end
+            
+            if i == round(length(storePerImage)/2);
+                ylabel(toYLabel);
+            end            
+            title(allTrialTypes{i});   
+            
+            if ~isempty(params.limits);
+                ylim(params.limits);
+            end
+    end
+    legend(drugTypes);
 end
-    
-
-% d = concatenateData(storePerImage);
-% 
-% % if strcmp(params.lineType,'per drug') && strcmp(params.xAxis,'time');    
-% %     for i = 1:size(d,2);
-% %         perDrug = reshape(d(:,i),size(M2{1}{1,1},1),length(storePerImage));
-% %         storeMeans(:,i) = mean(perDrug,2);
-% %     end            
-% % end
-% 
-% if strcmp(params.lineType,'per drug') && strcmp(params.xAxis,'dose');
-%     
-%     for i = 1:length(drugTypes):size(d,1);        
-%         perImg = d(i:length(drugTypes):end,:);               
-%         subplot(10,3,i);
-%         plot(perImg');
-%     end
-%     
-% end
-
-
-    
 
 
 

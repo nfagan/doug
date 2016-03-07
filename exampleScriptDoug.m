@@ -17,8 +17,8 @@ global allPos;
 % --------------------------------
 
 monkey = 'Coppola';
-drugTypes = {'OTN','OT_test'};
-dosages = {'small','medium','large'};
+drugTypes = {'OT','OTN_2'};
+dosages = {'small','medium','large','saline'};
 
 toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
@@ -47,19 +47,18 @@ allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define t
 % analysis portion
 % --------------------------------
 
-% M = cell(length(drugTypes),length(dosages));
-M = [];
-
-for i = 1:length(allTrialTypes);
+M = cell(length(allTrialTypes),1);
+for i = 1:length(allTrialTypes); % for each image ...
+    fprintf('\nIMAGE: %d of %d (%s)',i,length(allTrialTypes),allTrialTypes{i});
     trialType = {allTrialTypes{i}};
-
-for j = 1:length(drugTypes);
-    
-    for k = 1:length(dosages);
+for j = 1:length(drugTypes); % for each drug ...
+    fprintf('\n\tDRUG: %d of %d (%s)',j,length(drugTypes),drugTypes{j});
+    for k = 1:length(dosages); % for each dose ...
+    fprintf('\n\t\tDOSE: %d of %d (%s)',k,length(dosages),dosages{k});
     % --------------------------------
     % load in files
     % --------------------------------
-    umbrellaDirectory = getUmbrDir(monkey,drugTypes{j},dosages{k});
+    [umbrellaDirectory,doseNames{k}] = getUmbrDir(monkey,drugTypes{j},dosages{k});
     [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
     % --------------------------------
     % get all relevant data
@@ -71,12 +70,13 @@ for j = 1:length(drugTypes);
     M{i}{j,k} = genTable(saveData,region);
     end
 end
-
 end
-
+fprintf('\nDone!\n');
 %%
-
-storePerImage = newPlot(M,'lineType','per stim','xAxis','time','treatNaNs','meanReplace');
+% --------------------------------
+% plot
+% --------------------------------
+storePerImage = newPlot(M,'lineType','per drug','xAxis','dose','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
 
 %%
 % --------------------------------
