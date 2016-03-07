@@ -1,8 +1,8 @@
 function umbrellaDirectory = getUmbrDir(monkey,drugType,dosage)
 
 switch monkey
-    case 'Kurosawa'
-        monkDir = '/Users/Doug/....'; %path to monkey directory
+    case 'Coppola'
+        monkDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/';
     case 'Lager'
         monkDir = '/Users/Doug/....';
     case ''
@@ -11,9 +11,9 @@ end
 
 switch drugType
     case 'OTN'
-        sm = '.5'; %folder names ... fill in
-        md = '.1';
-        lg = '1';
+        sm = '12 IU'; %folder names ... fill in
+        md = '24 IU';
+        lg = '48 IU';
     case 'OT'
         sm = '';
         md = '';

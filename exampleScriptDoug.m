@@ -1,5 +1,5 @@
 startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
-umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
+% umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 % --------------------------------
 % define global variables
 % --------------------------------
@@ -16,14 +16,14 @@ global allPos;
 % master inputs
 % --------------------------------
 
-monkey = 'Kurosawa';
-drugTypes = {'OT','OTN','N','Saline'};
+monkey = 'Coppola';
+drugTypes = {'OTN'};
 dosages = {'small','medium','large'};
 
 toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
-lineType = 'per drug';
+lineType = 'per stim';
 xAxis = 'dose';
 
 roiPos.minX = 620;
@@ -54,7 +54,7 @@ for j = 1:length(drugTypes);
     % --------------------------------
     % load in files
     % --------------------------------
-%     umbrellaDirectory = getUmbrDir(monkey,drugTypes{j},dosages{k});
+    umbrellaDirectory = getUmbrDir(monkey,drugTypes{j},dosages{k});
     [allTimes,allEvents] = getFilesDoug(umbrellaDirectory); % load all files
     % --------------------------------
     % get all relevant data
