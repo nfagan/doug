@@ -63,20 +63,27 @@ for j = 1:length(drugTypes); % for each drug ...
     % --------------------------------
     % get all relevant data
     % --------------------------------
-    saveData = getSaveData(allTimes,allEvents,trialType);
-    % --------------------------------
-    % construct matrix and plot
-    % --------------------------------
-    M{i}{j,k} = genTable(saveData,region);
+    saveData{i}{j,k} = getSaveData(allTimes,allEvents,trialType);
     end
 end
 end
 fprintf('\nDone!\n');
+%% generate table
+for i = 1:length(allTrialTypes);
+    for j = 1:length(drugTypes);
+        for k = 1:length(dosages);
+            % --------------------------------
+            % construct matrix and plot
+            % --------------------------------
+            M{i}{j,k} = genTable(saveData{i}{j,k},region);
+        end
+    end
+end
 %%
 % --------------------------------
 % plot
 % --------------------------------
-storePerImage = newPlot(M,'lineType','per drug','xAxis','dose','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
+storePerImage = newPlot(M,'lineType','per drug','xAxis','time','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
 
 %%
 % --------------------------------
