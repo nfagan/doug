@@ -1,4 +1,4 @@
-startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug/';
+startDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
 % umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 % --------------------------------
 % define global variables
@@ -17,10 +17,10 @@ global allPos;
 % --------------------------------
 
 monkey = 'Coppola';
-drugTypes = {'OT','OTN_2'};
+drugTypes = {'OT'};
 dosages = {'small','medium','large','saline'};
 
-toExamine = 'average duration'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
+toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
 
 lineType = 'per stim';
@@ -69,6 +69,7 @@ end
 end
 fprintf('\nDone!\n');
 %% generate table
+toExamine = 'proportion';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);
@@ -83,7 +84,18 @@ end
 % --------------------------------
 % plot
 % --------------------------------
-storePerImage = newPlot(M,'lineType','per drug','xAxis','time','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
+storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
+%'lineType' -- what different lines correspond to
+%   'per stim' -- each line is a different image
+%   'per drug' -- each line is a different drug
+%'xAxis' -- what's on the x axis
+%   'dose' -- each x coord is a dose
+%   'time' -- each x coord is a block number
+%'limits' -- ylimits of the plot, specified as two element vector: [a b]
+%'treatNaNs' -- how to deal with nan values (missing data) when plotting
+%over time. Choose 'meanReplace' to guarentee that *something* will be
+%plotted, but understand that this is probably a bad idea. Choose
+%{'valReplace',VALUE} to specify what these empty values should b
 
 %%
 % --------------------------------
@@ -92,14 +104,3 @@ storePerImage = newPlot(M,'lineType','per drug','xAxis','time','treatNaNs','mean
 limits = [];
 % barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
 M2 = reformatData(M,'lineType',lineType,'xAxis',xAxis,'limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
-
-
-
-
-
-
-
-
-
-
-%

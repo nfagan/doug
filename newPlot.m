@@ -131,7 +131,13 @@ if strcmp(params.lineType,'per stim')
     hold on;
     for i = 1:length(storePerImage);
         if strcmp(params.xAxis,'dose');
-            plot(mean(storePerImage{i})');
+            if size(storePerImage{1},1) > 1            
+                plot(mean(storePerImage{i})');
+                warning(['M contains multiple drugs'' worth of data. What''s plotted' ...
+                , ' will be an average across these!']);
+            else
+                plot(storePerImage{i}');
+            end
             set(gca,'xtick',1:length(dosages));
             if ~isempty(params.doseNames) && length(drugTypes) == 1;
                 set(gca,'xticklabel',params.doseNames);

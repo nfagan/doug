@@ -2,21 +2,22 @@ function [umbrellaDirectory,varargout] = getUmbrDir(monkey,drugType,dosage)
 
 switch monkey
     case 'Coppola'
+        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Coppola';
 %         monkDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/';
-        monkDir = 'C:\Users\changLab\doug\data';
+%         monkDir = 'C:\Users\changLab\doug\data';
     case 'Lager'
-        monkDir = '/Users/Doug/....';
-    case ''
-        monkDir = '/Users/Doug/....';
+        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Lager';
+    case 'Joda'
+        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Joda';
 end
 
 switch drugType
-    case 'OTN'
+    case 'OTN_2'
         sm = '12 IU'; %folder names ... fill in
         md = '24 IU';
         lg = '48 IU';
-        sal = '';
-    case 'OTN_2'
+        sal = 'Saline';
+    case 'OTN'
         sm = '12 IU_0.5 mg';
         md = '24 IU_1 mg';
         lg = '48 IU_2 mg';
