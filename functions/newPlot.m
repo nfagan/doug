@@ -122,6 +122,8 @@ switch toExamine
         toYLabel = 'Number of Fixations';
     case 'n images'
         toYLabel = 'Number of Images Seen';
+    case 'normalized proportion'
+        toYLabel = 'Normalized Prop. of Fixations ROI : Whole Face';
 end
 
 % --------------------------------

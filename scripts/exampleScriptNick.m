@@ -1,5 +1,3 @@
-startDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
-% umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
 % --------------------------------
 % define global variables
 % --------------------------------
@@ -16,6 +14,7 @@ global compName;
 % --------------------------------
 % master inputs
 % --------------------------------
+
 compName = 'nick';
 monkey = 'Coppola';
 drugTypes = {'OTN_2','OT_test'};
@@ -70,7 +69,7 @@ end
 end
 fprintf('\nDone!\n');
 %% generate table
-toExamine = 'average duration';
+toExamine = 'normalized proportion';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);
@@ -96,12 +95,4 @@ storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','mean
 %'treatNaNs' -- how to deal with nan values (missing data) when plotting
 %over time. Choose 'meanReplace' to guarentee that *something* will be
 %plotted, but understand that this is probably a bad idea. Choose
-%{'valReplace',VALUE} to specify what these empty values should b
-
-%%
-% --------------------------------
-% plot
-% --------------------------------
-limits = [];
-% barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
-M2 = reformatData(M,'lineType',lineType,'xAxis',xAxis,'limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
+%{'valReplace',VALUE} to specify what these empty values should be
