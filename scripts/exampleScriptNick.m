@@ -18,7 +18,7 @@ global compName;
 % --------------------------------
 compName = 'nick';
 monkey = 'Coppola';
-drugTypes = {'OTN','OT'};
+drugTypes = {'OTN_2','OT_test'};
 dosages = {'small','medium','large'};
 
 toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
@@ -70,7 +70,7 @@ end
 end
 fprintf('\nDone!\n');
 %% generate table
-toExamine = 'n images';
+toExamine = 'average duration';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);
@@ -81,7 +81,6 @@ for i = 1:length(allTrialTypes);
         end
     end
 end
-%%
 % --------------------------------
 % plot
 % --------------------------------
