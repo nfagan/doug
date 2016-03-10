@@ -18,7 +18,7 @@ global compName;
 % --------------------------------
 compName = 'nick';
 monkey = 'Coppola';
-drugTypes = {'OTN_2','OT_test'};
+drugTypes = {'OTN','OT'};
 dosages = {'small','medium','large'};
 
 toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
@@ -70,7 +70,7 @@ end
 end
 fprintf('\nDone!\n');
 %% generate table
-toExamine = 'proportion';
+toExamine = 'n images';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);

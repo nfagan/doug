@@ -142,11 +142,15 @@ if strcmp(params.lineType,'per stim') && strcmp(params.xAxis,'dose') && ...
                 set(gca,'xticklabel',params.doseNames);
             else                        
                 set(gca,'xticklabel',dosages);
-            end            
+            end
+            if ~isempty(params.limits);
+                ylim(params.limits);
+            end
         end
     end    
     xlabel('Dose');
     ylabel(toYLabel);
+    legend(allTrialTypes);
 else
 
 if strcmp(params.lineType,'per stim')
