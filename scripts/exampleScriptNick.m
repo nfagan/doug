@@ -11,14 +11,15 @@ global allTrialTypes;
 global allBlockStarts;
 global allBlockEnds;
 global allPos;
+global compName;
 
 % --------------------------------
 % master inputs
 % --------------------------------
-
+compName = 'nick';
 monkey = 'Coppola';
-drugTypes = {'OT'};
-dosages = {'small','medium','large','saline'};
+drugTypes = {'OTN_2','OT_test'};
+dosages = {'small','medium','large'};
 
 toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
@@ -84,7 +85,8 @@ end
 % --------------------------------
 % plot
 % --------------------------------
-storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
+storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','meanReplace','doseNames',...
+    doseNames,'limits',[],'subplotPerDrug',1);
 %'lineType' -- what different lines correspond to
 %   'per stim' -- each line is a different image
 %   'per drug' -- each line is a different drug

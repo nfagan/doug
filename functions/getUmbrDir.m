@@ -1,14 +1,29 @@
 function [umbrellaDirectory,varargout] = getUmbrDir(monkey,drugType,dosage)
 
+global compName; compName = lower(compName);
+
+if ~isempty(compName)
+    switch compName;
+        case 'doug'
+            baseDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
+        case 'nick'
+            if strcmp(computer,'MACI64');
+                baseDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/';
+            else
+                baseDir = 'C:\Users\changLab\doug\';
+            end
+    end
+else
+    baseDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
+end    
+
 switch monkey
     case 'Coppola'
-        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Coppola';
-%         monkDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/';
-%         monkDir = 'C:\Users\changLab\doug\data';
+        monkDir = fullfile(baseDir,'Coppola');
     case 'Lager'
-        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Lager';
+        monkDir = fullfile(baseDir,'Lager');
     case 'Joda'
-        monkDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/Joda';
+        monkDir = fullfile(baseDir,'Joda');
 end
 
 switch drugType
