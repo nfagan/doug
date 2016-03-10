@@ -1,5 +1,5 @@
-startDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
-% umbrellaDirectory = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/data/OTN/time_efix'; %change this to where your files are located
+%startDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
+umbrellaDirectory = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/'; %change this to where your files are located
 % --------------------------------
 % define global variables
 % --------------------------------
@@ -17,7 +17,7 @@ global allPos;
 % --------------------------------
 
 monkey = 'Coppola';
-drugTypes = {'OT'};
+drugTypes = {'OT','OTN'}
 dosages = {'small','medium','large','saline'};
 
 toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
@@ -40,7 +40,7 @@ allPos = {roiPos,wholePos};
 allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
 allBlockEnds = allBlockStarts(:) + 60e4;
 
-allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
+allTrialTypes = {'people','monkeys'}; %define the images you want to isolate -- scrambled, people, monkeys, outdoors, animals
 % if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
 
 % --------------------------------
@@ -69,7 +69,7 @@ end
 end
 fprintf('\nDone!\n');
 %% generate table
-toExamine = 'proportion';
+toExamine = 'raw counts';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);
@@ -96,11 +96,3 @@ storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','mean
 %over time. Choose 'meanReplace' to guarentee that *something* will be
 %plotted, but understand that this is probably a bad idea. Choose
 %{'valReplace',VALUE} to specify what these empty values should b
-
-%%
-% --------------------------------
-% plot
-% --------------------------------
-limits = [];
-% barPlots(M,'all',allTrialTypes); %per stimulus, per block, all
-M2 = reformatData(M,'lineType',lineType,'xAxis',xAxis,'limits',limits); %lineType: 'per drug' or 'per stim'; xAxis: 'dose' or 'time'
