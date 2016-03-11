@@ -1,4 +1,4 @@
-function [storePerImage,d] = newPlot(M,varargin)
+function [storePerImage] = newPlot(M,varargin)
 
 global toExamine;
 global drugTypes;
@@ -10,7 +10,8 @@ params = struct(... %default values of params struct
     'xAxis','dose', ...
     'treatNaNs',{'default'}, ...
     'limits',[], ...
-    'doseNames',[] ...
+    'doseNames',[], ...
+    'subplotPerDrug',0 ...
     );    
 
 params = structInpParse(params,varargin);
@@ -121,20 +122,49 @@ switch toExamine
         toYLabel = 'Number of Fixations';
     case 'n images'
         toYLabel = 'Number of Images Seen';
+    case 'normalized proportion'
+        toYLabel = 'Normalized Prop. of Fixations ROI : Whole Face';
 end
 
 % --------------------------------
 % plot
 % --------------------------------
 
+if strcmp(params.lineType,'per stim') && strcmp(params.xAxis,'dose') && ...
+        params.subplotPerDrug
+    hold on;
+    for j = 1:size(storePerImage{1},1)
+        subplot(size(storePerImage{1},1),1,j);
+        title(drugTypes{j});
+        for i = 1:length(storePerImage)
+            hold on;
+            plot(1:size(storePerImage{i},2),storePerImage{i}(j,:));
+            set(gca,'xtick',1:length(dosages));
+            if ~isempty(params.doseNames) && length(drugTypes) == 1;
+                set(gca,'xticklabel',params.doseNames);
+            else                        
+                set(gca,'xticklabel',dosages);
+            end
+            if ~isempty(params.limits);
+                ylim(params.limits);
+            end
+        end
+    end    
+    xlabel('Dose');
+    ylabel(toYLabel);
+    legend(allTrialTypes);
+else
+
 if strcmp(params.lineType,'per stim')
     hold on;
     for i = 1:length(storePerImage);
         if strcmp(params.xAxis,'dose');
-            if size(storePerImage{1},1) > 1            
+            if size(storePerImage{1},1) > 1
                 plot(mean(storePerImage{i})');
-                warning(['M contains multiple drugs'' worth of data. What''s plotted' ...
-                , ' will be an average across these!']);
+                if i == 1;
+                    warning(['M contains multiple drugs'' worth of data. What''s plotted' ...
+                    , ' will be an average across these!']);
+                end
             else
                 plot(storePerImage{i}');
             end
@@ -192,6 +222,8 @@ if strcmp(params.lineType,'per drug');
             end
     end
     legend(drugTypes);
+end
+
 end
 
 
