@@ -1,5 +1,5 @@
 %startDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
-umbrellaDirectory = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/'; %change this to where your files are located
+% umbrellaDirectory = '/Users/dougstreat/Google Drive/PSYC Thesis/Data/'; %change this to where your files are located
 % --------------------------------
 % define global variables
 % --------------------------------
@@ -17,14 +17,13 @@ global allPos;
 % --------------------------------
 
 monkey = 'Coppola';
-drugTypes = {'OT','OTN'}
+% drugTypes = {'OT','OTN'}
+drugTypes = {'N'};
 dosages = {'small','medium','large','saline'};
 
-toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
+toExamine = 'n images'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
 region = 'roi';
-
-lineType = 'per stim';
-xAxis = 'dose';
+% if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
 
 roiPos.minX = 620;
 roiPos.maxX = 980;
@@ -37,10 +36,16 @@ wholePos.minY = 250;
 wholePos.maxY = 650;
 
 allPos = {roiPos,wholePos};
-allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
-allBlockEnds = allBlockStarts(:) + 60e4;
+allBlockStarts = 0;
+% allBlockEnds = 1050e4+60e4;
+allBlockEnds = 1000e5;
 
-allTrialTypes = {'people','monkeys'}; %define the images you want to isolate -- scrambled, people, monkeys, outdoors, animals
+% allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
+% allBlockEnds = allBlockStarts(:) + 60e4;
+
+% allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'};
+allTrialTypes = {'monkeys','nonConspecific','nonSocial'};
+% allTrialTypes = {'people','monkeys'}; %define the images you want to isolate -- scrambled, people, monkeys, outdoors, animals
 % if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
 
 % --------------------------------
@@ -80,11 +85,10 @@ for i = 1:length(allTrialTypes);
         end
     end
 end
-%%
 % --------------------------------
 % plot
 % --------------------------------
-storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
+storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','subplotPerDrug',1,'treatNaNs','meanReplace','doseNames',doseNames,'limits',[]);
 %'lineType' -- what different lines correspond to
 %   'per stim' -- each line is a different image
 %   'per drug' -- each line is a different drug

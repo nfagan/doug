@@ -21,7 +21,13 @@ for i = 1:length(trialTypes);
         end
         if strcmp(toComp,'scrambled');
             getTrial(i) = 5; invalid(i) = 0;
-        end        
+        end
+        if strcmp(toComp,'nonConspecific');
+            getTrial = [1 4]; invalid(i) = 0;
+        end
+        if strcmp(toComp,'nonSocial');
+            getTrial = [3 5]; invalid(i) = 0;
+        end            
     else        
         getTrial = [1 2 3 4 5]; invalid(i) = 0;   
     end
