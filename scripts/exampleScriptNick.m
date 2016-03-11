@@ -85,14 +85,3 @@ end
 % --------------------------------
 storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','meanReplace','doseNames',...
     doseNames,'limits',[],'subplotPerDrug',1);
-%'lineType' -- what different lines correspond to
-%   'per stim' -- each line is a different image
-%   'per drug' -- each line is a different drug
-%'xAxis' -- what's on the x axis
-%   'dose' -- each x coord is a dose
-%   'time' -- each x coord is a block number
-%'limits' -- ylimits of the plot, specified as two element vector: [a b]
-%'treatNaNs' -- how to deal with nan values (missing data) when plotting
-%over time. Choose 'meanReplace' to guarentee that *something* will be
-%plotted, but understand that this is probably a bad idea. Choose
-%{'valReplace',VALUE} to specify what these empty values should be
