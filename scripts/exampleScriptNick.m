@@ -40,7 +40,7 @@ allPos = {roiPos,wholePos};
 allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
 allBlockEnds = allBlockStarts(:) + 60e4;
 
-allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'}; %define the images you want to isolate
+allTrialTypes = {'nonConspecific','people','monkeys','outdoors','animals'}; %define the images you want to isolate
 % if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
 
 % --------------------------------
