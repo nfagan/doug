@@ -11,40 +11,47 @@ global allBlockStarts;
 global allBlockEnds;
 global allPos;
 global compName;
+global region;
 
 % --------------------------------
 % -- master inputs -- 
 % --------------------------------
+% monkeys = {'Coppola'};
+% drugTypes = {'OTN_2','OT_test'};
+monkeys = {'Lager','Lager'};
+drugTypes = {'OT','N'};
 
 compName = 'nick';
-monkeys = {'Coppola'};
-drugTypes = {'OTN_2','OT_test'};
-dosages = {'small','medium','large'};
+dosages = {'small','medium','large','saline'};
 
-toExamine = 'raw counts'; %'proportion', 'normalized proportion' 'raw counts', 'average duration', or 'n images'
+%'proportions', 'meanLookingDuration' 'meanFixEventDuration','nImages'
+toExamine = 'meanFixEventDuration';
 region = 'roi';
 
-lineType = 'per stim';
-xAxis = 'dose';
-
-roiPos.minX = 620;
-roiPos.maxX = 980;
-roiPos.minY = 345;
-roiPos.maxY = 495;
-
-wholePos.minX = 600;
-wholePos.maxX = 1000;
-wholePos.minY = 250;
-wholePos.maxY = 650;
-
-allPos = {roiPos,wholePos};
-% allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
+allPos = lookingCoords('roi to whole face');
 allBlockStarts = [0 300e4 600e4 900e4];
 allBlockEnds = allBlockStarts(:) + 60e4;
 
-allTrialTypes = {'nonConspecific','people','monkeys','outdoors','animals'}; %define the images you want to isolate
-% if toExamine is 'normalized proportion', make sure first allTrialTypes is 'scrambled'
+allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'};
 
+saveData = analysisPortion; %get all data per monkey
+allSaveData = acrossMonkeys(saveData); %combine across monkeys
+images = reformatSaveData(allSaveData);
+
+plot_over_time_per_stimulus(images,'perDose','debug',0);
+
+
+%%
+normalized = getNormalizedProportion(images,'saline','normMethod','divide');
+% M = genTableLoop(allSaveData,region); %extract wanted data based on toExamine 
+%%
+% --------------------------------
+% plot
+% --------------------------------
+storePerImage = newPlot(M,'lineType','per stim','xAxis','dose',...
+    'treatNaNs','default','limits',[],'subplotPerDrug',1);
+%%
+% allBlockStarts = [0 150e4 300e4 450e4 600e4 750e4 900e4 1050e4];
 % --------------------------------
 %  -- analysis portion -- 
 % --------------------------------
@@ -80,7 +87,7 @@ fprintf('\nCombing across monkeys ...');
 allSaveData = acrossMonkeys(saveData);
 fprintf('\nDone!\n');
 %% generate table
-toExamine = 'proportion';
+toExamine = 'n images';
 for i = 1:length(allTrialTypes);
     for j = 1:length(drugTypes);
         for k = 1:length(dosages);
@@ -91,9 +98,3 @@ for i = 1:length(allTrialTypes);
         end
     end
 end
-%%
-% --------------------------------
-% plot
-% --------------------------------
-storePerImage = newPlot(M,'lineType','per stim','xAxis','dose','treatNaNs','default','doseNames',...
-    doseNames,'limits',[],'subplotPerDrug',1);

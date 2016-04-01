@@ -34,10 +34,12 @@ end
 M2 = M;
 
 storePerImage = cell(length(M2),1);
+storeSemPerImage = cell(length(M2),1);
 for i = 1:length(M2); % for each image ...
     
     if strcmp(params.xAxis,'dose');
         meanPerImage = zeros(size(M2{1},1),size(M2{1},2));
+        intSem = zeros(size(M2{1},1),size(M2{1},2));
         for j = 1:size(M2{1},1);
             for k = 1:size(M2{1},2);                
                 drugDose = M2{i}{j,k};                
@@ -53,9 +55,11 @@ for i = 1:length(M2); % for each image ...
                     
                 end               
                 meanPerImage(j,k) = nanmean(M2{i}{j,k});
+                intSem(j,k) = nanstd(M2{i}{j,k}) / sqrt(length(M2{i}{j,k}) - sum(isnan(M2{i}{j,k})));
             end            
         end
         storePerImage{i} = meanPerImage;
+        storeSemPerImage{i} = intSem;
     end
     
     if strcmp(params.xAxis,'time');
@@ -95,12 +99,15 @@ for i = 1:length(M2); % for each image ...
             end
             crossDose = nanmean(drugDose,2);
             crossDrug{j} = crossDose;
+            crossDrugSem{j} = nanstd(drugDose,2) ./ sqrt(size(drugDose,2));
         end       
         
     crossDrug = reshape(concatenateData(crossDrug),size(M2{1}{1,1},1),size(M2{1},1));
+    crossDrugSem = reshape(concatenateData(crossDrugSem),size(M2{1}{1,1},1),size(M2{1},1));
     
     if strcmp(params.lineType,'per stim')
         storePerImage{i} = mean(crossDrug,2);
+        storeSemPerImage{i} = std
     else
         storePerImage{i} = crossDrug;
     end    

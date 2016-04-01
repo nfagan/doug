@@ -16,6 +16,10 @@ function meanSaveData = acrossMonkeys(saveData)
                                     storeCurrent = vertcat(storeCurrent,update);
                                 end
                             end
+                            
+%                             if strcmp(fieldNames{il},'nImages') % if looking at the number of images, add number of images
+%                                 storeCurrent = sum(storeCurrent);
+%                             end
                             meanSaveData{1,i}{j,k}{ik,1}{1,ij}.(fieldNames{il}) = storeCurrent;
                         end
                     end

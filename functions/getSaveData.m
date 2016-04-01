@@ -26,15 +26,13 @@ for j = 1:length(allTrialTypes);
         
         [timesWithinBounds,fixedEvents] = fixLengths2(timesWithinBounds,allEvents);
             
-        storeFix = zeros(2); toSave = cell(1,2);
+        toSave = cell(1,2);
         for i = 1:2;
-            data = getDur2(timesWithinBounds,fixedEvents,allPos{i});
-            storeFix(i) = data.nFixations;
+            data = getDur(timesWithinBounds,fixedEvents,allPos{i});
             toSave{i} = data;
         end
-
-        toSave{1}.proportion = storeFix(1)/storeFix(2);
-        toSave{2}.proportion = storeFix(1)/storeFix(2);
+        
+        toSave = getProportion(toSave,'mean');
 
         saveData{step,j} = toSave;
         step = step+1;
