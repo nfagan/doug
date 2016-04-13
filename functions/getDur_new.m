@@ -4,10 +4,11 @@
 %total), the outputs will be pupil size and the duration of the first
 %looking event - in that order!
 
-function data = getDur(wantedTimes,allEvents,pos)
+function data = getDur_new(wantedTimes,allEvents,pos,pupil)
 
-global identifiers;
-global add_on;
+global addPupilData;
+
+addFixEventPupilSize = 0;
 
 if nargin < 3; %default values, if pos isn't specified
 
@@ -31,9 +32,12 @@ durPerImagePerFile = cell(1,length(wantedTimes));
 meanDurFixEventPerImagePerFile = cell(1,length(wantedTimes));
 semDurFixEventPerImagePerFile = cell(1,length(wantedTimes));
 pupilPerImagePerFile = cell(1,length(wantedTimes));
+pupilSizePerImagePerFile = cell(1,length(wantedTimes));
+pupilSizePerFixEventPerFile = cell(1,length(wantedTimes));
 
 for i = 1:length(wantedTimes);
     
+    onePupil = pupil{i}.pupil;
     oneTimes = wantedTimes{i}; %get one file's timing info
     oneFixEvents = allEvents{i}; %get one file's fixation events
     
@@ -47,12 +51,14 @@ for i = 1:length(wantedTimes);
     rowN = 1:length(fixStarts); %for indexing
     step = 1; %for saving per image
     
+    pupilSizePerFixEvent = cell(1,length(oneTimes));
     nFixationsPerImage = cell(1,length(oneTimes));
     fixEventDursPerImage = cell(1,length(oneTimes));
     durPerImage = cell(1,length(oneTimes));    
     meanDurFixEventPerImage = cell(1,length(oneTimes));    
     semDurFixEventPerImage = cell(1,length(oneTimes));
     pupilPerImage = cell(1,length(oneTimes));
+    pupilSizePerImage = cell(1,length(oneTimes));
     
     for j = 1:size(oneTimes,1); %for each image display time ...
         
@@ -95,6 +101,8 @@ for i = 1:length(wantedTimes);
             else
                 allDurs = firstLastDur(1);
             end
+            
+            fixEvents = [fixStarts(startIndex:endIndex) fixEnds(startIndex:endIndex)];
 
             allPup = pupSize(startIndex:endIndex);      
             allX = x(startIndex:endIndex);
@@ -105,34 +113,45 @@ for i = 1:length(wantedTimes);
             checkBounds = checkXBounds & checkYBounds;
 
             allDurs(~checkBounds) = [];
-            allPup(~checkBounds) = [];        
+            allPup(~checkBounds) = [];
+            fixEvents(~checkBounds,:) = [];
 
             if ~isempty(allDurs);
-                nFixationsPerImage{j} = length(allPup);
+                nFixationsPerImage{j} = [length(allPup) i];
                 meanDurFixEventPerImage{j} = mean(allDurs);
-                semDurFixEventPerImage{j} = [SEM(allDurs) (std(allDurs))^.2 length(allDurs)];
-                fixEventDursPerImage{step} = allDurs;
-                durPerImage{step} = sum(allDurs);
-                pupilPerImage{step} = [mean(allPup) SEM(allPup) (std(allPup))^.2 length(allPup)];
+                semDurFixEventPerImage{j} = [SEM(allDurs) (std(allDurs))^.2 length(allDurs) i];
+                fixEventDursPerImage{step} = [allDurs repmat(i,length(allDurs),1)];
+                durPerImage{step} = [sum(allDurs) i];
+                pupilPerImage{step} = [mean(allPup) SEM(allPup) (std(allPup))^.2 length(allPup) i];
                 step = step+1;
-%                 meanFixEventDurPerImage{step} = mean(allDurs);
-%                 semFixEventDurPerImage{step} = SEM(allDurs);                
                 
-                
-%                 forProportion{j} = length(allPup);
-%                 meanDurPerImage{step} = mean(allDurs);
-%                 dursPerImage{step} = sum(allDurs);
-%                 sizePerImage{step} = mean(allPup);
-%                 nFixPerImage{step} = length(allPup);
-%                 firstLookPerImage{step} = allDurs(1);
-%                 patchResidencePerImage{step} = startEndTimes(2) - startEndTimes(1);
-%                 step = step+1;
+                if addFixEventPupilSize && addPupilData % if getting pupil data per fixation event, with some time-lag
+                    fixEventPups = cell(length(fixEvents),1);
+                    for ll = 1:length(fixEvents);
+                        fixEventPups{ll} = getPupilSize(onePupil,fixEvents(ll,:),150); %adjust start time of fixation event to be 150ms to allow 
+                    end
+
+                    fixEventPups = concatenateData(fixEventPups);
+                    fixEventPups(:,2) = i;
+                    pupilSizePerFixEvent{step} = fixEventPups;
+
+                    else 
+                        pupilSizePerFixEvent{step} = [allPup repmat(i,length(allPup),1)];
+                end
+
             else
-%                 forProportion{j} = NaN;
-                nFixationsPerImage{j} = NaN;
+                nFixationsPerImage{j} = [NaN NaN];
+            end
+            
+            if addPupilData %if adding full time-course of pupil changes (slows down code a lot)
+                pupilData = getPupilSize(onePupil,startEndTimes);
+                pupilSizePerImage{j} = [pupilData' i];
+            else                
+                pupilSizePerImage{j} = NaN;
             end
         
         end %end if
+        
         
     end
     
@@ -153,6 +172,9 @@ for i = 1:length(wantedTimes);
     
     pupilPerImagePerFile{i} = pupilPerImage;
     
+    pupilSizePerImagePerFile{i} = concatenateData(pupilSizePerImage);
+    pupilSizePerFixEventPerFile{i} = concatenateData(pupilSizePerFixEvent);
+    
 %     [dursPerImage,sizePerImage,nFixPerImage,firstLookPerImage,patchResidencePerImage] = ...
 %         concatenateData(dursPerImage,sizePerImage,nFixPerImage,firstLookPerImage,patchResidencePerImage);
 %     
@@ -171,6 +193,8 @@ end
 
 %%% new outputs
 
+pupilSizePerImagePerFile = concatenateData(pupilSizePerImagePerFile);
+
 [nFixationsPerImagePerFile,fixEventDursPerImagePerFile,durPerImagePerFile] = ...
     concatenateData(nFixationsPerImagePerFile,fixEventDursPerImagePerFile,durPerImagePerFile);
 
@@ -178,38 +202,32 @@ end
     concatenateData(meanDurFixEventPerImagePerFile,semDurFixEventPerImagePerFile);
 
 pupilPerImagePerFile = concatenateData(pupilPerImagePerFile);
+pupilSizePerFixEventPerFile = concatenateData(pupilSizePerFixEventPerFile);
 
-data.pupilSize = pupilPerImagePerFile;
+% data.pupilSize = pupilPerImagePerFile;
 data.nImages = length(durPerImagePerFile);
 data.forProportion = nFixationsPerImagePerFile;
-data.nFixationsPerImage = nFixationsPerImagePerFile(~isnan(nFixationsPerImagePerFile));
+if ~isempty(nFixationsPerImagePerFile);
+    data.nFixationsPerImage = nFixationsPerImagePerFile(~isnan(nFixationsPerImagePerFile(:,1)),:);
+else
+    data.nFixationsPerImage = [];
+end
 data.meanLookingDuration = [mean(durPerImagePerFile) SEM(durPerImagePerFile) (std(durPerImagePerFile)).^2 ...
     length(durPerImagePerFile)];
-% data.semLookingDuration = SEM(durPerImagePerFile);
 data.meanDurationFixEvent = [mean(fixEventDursPerImagePerFile) SEM(fixEventDursPerImagePerFile) (std(fixEventDursPerImagePerFile)).^2 ...
     length(fixEventDursPerImagePerFile)];
-% data.semDurationFixEvent = SEM(fixEventDursPerImagePerFile);
 data.meanDurationFixEventPerImage = [meanDurFixEventPerImagePerFile semDurFixEventPerImagePerFile];
-% data.semDurationFixEventPerImage = semDurFixEventPerImagePerFile;
-% 
-% 
-% 
-% 
-% saveMeanDur = concatenateData(meanDurPerFile);
-% [saveDurs,savePupil,saveNFix,saveFirstLook] = concatenateData(dursPerFile,sizePerFile,nFixPerFile,firstLookPerFile);
-% savePatchResidence = concatenateData(patchResidencePerFile);
-% saveProp = concatenateData(forPropPerFile);
-% 
-% %%%% outputs
-% data.nImages = length(saveMeanDur);
-% data.nSessions = i;
-% data.forProportion = saveProp;
-% data.meanDuration = saveMeanDur;
-% data.allDurations = saveDurs;
-% data.firstLook = saveFirstLook;
-% data.pupilSize = savePupil;
-% % data.nFixations = sum(saveNFix);
-% data.nFixations = saveNFix;
-% data.patchResidence = savePatchResidence;
+
+data.lookingDuration = durPerImagePerFile;
+data.fixEventDuration = fixEventDursPerImagePerFile;
+
+% for n = 1:length(unique(durPerImagePerFile(:,2)));
+%     nImagesPerSession(n,:) = [length(durPerImagePerFile(durPerImagePerFile(:,2) == n,:)) n];
+% end
+nImagesPerSession = NaN;
+
+data.nImagesPerSession = nImagesPerSession;
+data.pupilSize = pupilSizePerImagePerFile;
+data.pupilSizePerFixEvent = pupilSizePerFixEventPerFile;
 
 end %end monkey number loop

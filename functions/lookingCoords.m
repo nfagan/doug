@@ -1,16 +1,16 @@
-function coordinates = lookingCoords(proportionType)
+function coordinates = lookingCoords()
 
-firstType = 'roi to whole face';
-secondType = 'whole picture to whole screen';
+global region;
 
-if ~strcmp(proportionType,firstType) && ~strcmp(proportionType,secondType);
-    error('''%s'' is not a recognized proportion type. Possible inputs are:\n''%s''\n''%s''',...
-        proportionType,firstType,secondType)
+
+if ~strcmp(region,'eyes') && ~strcmp(region,'image') && ~strcmp(region,'screen');
+    error('''%s'' is not a recognized region. Possible inputs are:\n''%s''\n''%s''\n ''%s''',...
+        region,'eyes','image','screen')
 end
     
 
-switch proportionType
-    case 'roi to whole face'
+switch region
+    case 'eyes'
         
         roiPos.minX = 620;
         roiPos.maxX = 980;
@@ -22,17 +22,31 @@ switch proportionType
         wholePos.minY = 250;
         wholePos.maxY = 650;
         
-    case 'whole picture to whole screen'
+    case 'image'
         
-        roiPos.minX = 620;
-        roiPos.maxX = 980;
-        roiPos.minY = 345;
-        roiPos.maxY = 495;
+        roiPos.minX = 600;
+        roiPos.maxX = 1000;
+        roiPos.minY = 250;
+        roiPos.maxY = 650;
 
-        wholePos.minX = 600;
-        wholePos.maxX = 1000;
-        wholePos.minY = 250;
-        wholePos.maxY = 650;
+        wholePos.minX = 0;
+        wholePos.maxX = 1600;
+        wholePos.minY = 0;
+        wholePos.maxY = 900;
+        
+    case 'screen'
+        
+        roiPos.minX = 600;
+        roiPos.maxX = 1000;
+        roiPos.minY = 250;
+        roiPos.maxY = 650;
+
+        wholePos.minX = 0;
+        wholePos.maxX = 1600;
+        wholePos.minY = 0;
+        wholePos.maxY = 900;
+        
+        
 end
 
 coordinates = {roiPos,wholePos};

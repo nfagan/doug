@@ -1,4 +1,7 @@
-function [allTimes,allEvents] = getFilesDoug(umbrellaDirectory)
+function [allTimes,allEvents,varargout] = getFilesDoug(umbrellaDirectory)
+
+global addPupilData;
+
 cd(umbrellaDirectory);
 
 allFiles = dir(umbrellaDirectory);
@@ -74,10 +77,21 @@ for j = 1:length(idNumbers); % for each set of data files / for each id number .
         end
     end
     
+    pupilLoadStr = sprintf('pupil %s.mat',currentId);
+    if addPupilData;
+        pupil{j} = load(pupilLoadStr);
+    else
+        pupil{j}.pupil = NaN;
+    end
+    
     %store times, and events PER id number (set of files)
    
     allTimes{j} = times;
     allEvents{j} = fixationEvents;
     
     clear times fixationEvents;
+end
+
+if nargout > 2;
+    varargout{1} = pupil;
 end

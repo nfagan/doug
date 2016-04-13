@@ -1,13 +1,19 @@
-function saveData = getSaveData(allTimes,allEvents,allTrialTypes)
+function saveData = getSaveData(allTimes,allEvents,trialTypes)
 
+global add_on;
+global identifiers;
 global allBlockStarts;
 global allBlockEnds;
 global allPos;
+global monkeys;
+global allTrialTypes;
+global drugs;
+global dosages;
 
 saveData = cell(1,1);
-for j = 1:length(allTrialTypes);
+for j = 1:length(trialTypes);
     
-    trialType{1} = allTrialTypes{j};
+    trialType{1} = trialTypes{j};
     wantedTimes = getTrials(allTimes,trialType); %only output the display times associated with the images we're interested in
     
     step = 1;
@@ -36,6 +42,7 @@ for j = 1:length(allTrialTypes);
 
         saveData{step,j} = toSave;
         step = step+1;
+        
  
     end
 end

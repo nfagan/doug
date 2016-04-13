@@ -8,7 +8,9 @@ if ~isempty(compName)
             baseDir = '/Users/dougstreat/Google Drive/PSYC Thesis/Raw Data/';
         case 'nick'
             if strcmp(computer,'MACI64');
-                baseDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/';
+%                 baseDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/';
+                baseDir = '/Volumes/My Passport/NICK/Chang Lab 2016/doug/Raw Data';
+    
             else
                 baseDir = 'C:\Users\changLab\doug\';
             end

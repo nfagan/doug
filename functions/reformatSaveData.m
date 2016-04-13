@@ -1,7 +1,7 @@
 function images = reformatSaveData(saveData)
 
-possibleInputs = ['nImages' '\n' 'proportions' '\n' 'nFixations' '\n' 'meanLookingDuration' ...
-    'meanFixEventDuration'];
+possibleInputs = ['nImages' '\n' 'proportions' '\n' 'nFixations' '\n' 'meanLookingDuration' '\n' ...
+    'meanFixEventDuration' '\n' 'pupilSize'];
 
 global allTrialTypes;
 global drugTypes;
@@ -10,9 +10,11 @@ global toExamine;
 global region;
 
 switch region
-    case 'roi'
+    case 'eyes'
         rg = 1;
-    case 'whole face'
+    case 'image'
+        rg = 1;
+    case 'screen'
         rg = 2;
     otherwise
         error('%s is not a recognized region type. region can be ''roi'' or ''whole face''',region);
@@ -29,6 +31,8 @@ switch toExamine;
         wantedField = 'meanLookingDuration';
     case 'meanFixEventDuration'
         wantedField = 'meanDurationFixEvent';
+    case 'pupilSize'
+        wantedField = 'pupilSize';
     otherwise
         fprintf(possibleInputs);
         error(['\n ''%s'' is not a recognized output of getDur2. See above for possible' ...

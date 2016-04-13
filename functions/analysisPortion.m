@@ -1,5 +1,7 @@
 function saveData = analysisPortion()
 
+global add_on;
+global identifiers;
 global allTrialTypes;
 global monkeys;
 global drugTypes;
