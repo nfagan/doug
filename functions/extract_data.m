@@ -7,10 +7,20 @@ possibleInputs = ['\nproportions\nmeanLookingDuration\nmeanFixEventDuration\nnIm
 , '\nnFixations\npupilSize\nlookingDuration\nfixEventDuration\n'];
 
 switch toExamine;
+    case 'fixCountsTimeCourse'
+        wantedField = 'fix_counts_time_course';
+    case 'fixDurTimeCourse'
+        wantedField = 'fix_dur_time_course';
+    case 'nImagesPerSession'
+        wantedField = 'nImagesPerSession';
+    case 'pupilPSTHBaseline'
+        wantedField = 'baselinePupilSizePerFixEvent';
+    case 'pupilPSTH'
+        wantedField = 'pupilSizePerFixEvent';
     case 'pupilTimeCourse'
         wantedField = 'pupilTimeCourse';
     case 'pupilSizePerFixEvent'
-        wantedField = 'pupilSizePerFixEvent';
+        wantedField = 'pupilSizePerFixEvent'; %duplicate to preserve compabatibility
     case 'nImages'
         wantedField = 'nImages';
     case 'lookingDuration'
@@ -31,8 +41,6 @@ switch toExamine;
         wantedField = 'meanDurationFixEvent';
     case 'pupilSize'
         wantedField = 'pupilSize';
-    case 'nImagesPerSession'
-        wantedField = 'nImagesPerSession';
     otherwise
         fprintf(possibleInputs);
         error(['\n ''%s'' is not a recognized output of getDur2. See above for possible' ...
@@ -84,7 +92,9 @@ if sessionCol > 1;
     storeValues = storeValues(:,1:(sessionCol - 1));
 end
 
-nanInd = isnan(storeValues(:,1)); %get rid of repeated NaN values (from empty data)
+% nanInd = isnan(storeValues(:,1)); %get rid of repeated NaN values (from empty data)
+nanInd = sum(isnan(storeValues),2) >= 1; %get rid of repeated NaN values (from empty data)
+
 storeValues(nanInd,:) = [];
 for i = 1:l+1
     outputLabels{i}(nanInd) = [];

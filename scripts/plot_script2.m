@@ -2,16 +2,16 @@
 global region;
 global toExamine;
 region = 'image';
-loadIn = 0;
+loadIn = 1;
 if loadIn;
 %     cd('/Volumes/My Passport/for_doug/for_doug'); %%%change this
     cd('/Volumes/My Passport/NICK/Chang Lab 2016/doug/pupil_stuff');
-%     load(sprintf('%s.mat',region));
-    load('testLager.mat');
+    load(sprintf('%s_new_run.mat',region));
+%     load('eyes.mat');
 end
 
 %% extract data from loaded variables
-toExamine = 'fixEventDuration';
+toExamine = 'nImagesPerSession';
 [storeValues,storeLabels] = extract_data(new_saveData,labels);
 
 %% ONLY FOR nImages: if wanting to look over the full session
@@ -27,16 +27,16 @@ plot_doses(normed,normedLabels,'ylabel','FILL IN'); %plot normalized data
 %% FOR EVERTHING ELSE: run if wanting to look at whole session
 
 fixedLabels = set_all(storeLabels,'blocks',1); %if wanting to look at whole session
-[normed,normedLabels] = norm_by(storeValues,fixedLabels,'scrambled','bothMeans',0);
+[normed,normedLabels] = norm_by(storeValues,fixedLabels,'saline','bothMeans',0);
+% normed = storeValues; normedLabels = fixedLabels;
 
-%%
 [normed,normedLabels] = separate_data(normed,normedLabels,'monkeys',{'all'},...
-    'images',{'people','monkeys','outdoors','animals'});
+    'images',{'people','monkeys','outdoors','animals','scrambled'});
 
-plot_doses(normed,normedLabels,'addFit',0);
+plot_doses(normed,normedLabels,'addFit',0,'ylabel','nImages','limits',[]);
 %% run if wanting to plot over TIME -- removes coppola's data
 
-[normed,normedLabels] = norm_by(storeValues,storeLabels,'scrambled','normMethod','subtract'); % 'normMethod','subtract'
+[normed,normedLabels] = norm_by(storeValues,storeLabels,'scrambled','normMethod','divide'); % 'normMethod','subtract'
 [normed,normedLabels] = separate_data(normed,normedLabels,'monkeys',...
     {'Joda','Lager'},'images',{'people','monkeys','outdoors','animals'});
 

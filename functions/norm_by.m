@@ -91,6 +91,13 @@ for i = 1:n_images;
                                 storeExtr{step,1} = primMeans-secMeans;
                             end
                             step = step+1;
+                        else
+                            disp(images{i}); %change this -- done this way for debugging
+                            disp(drugs{k});
+                            disp(doses{j});
+                            disp(blocks(l));
+                            disp(monkeys{m});
+                            error('is empty');
                         end
                     end
                 else %if not within monkey

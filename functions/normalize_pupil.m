@@ -15,11 +15,17 @@ for i = 1:size(withoutBase,2);
     normalized(:,i) = withoutBase(:,i)./baselineMeans;
 end
 
-checkZeros = sum(normalized == 0,2) >= 1;
-normalized(checkZeros,:) = [];
+checkZeros = sum(normalized == 0,2) >= 1; %index errors - zeros
+checkNans = sum(isnan(normalized),2) >= 1; %index errors - nans
+
+allErrors = checkZeros | checkNans;
+
+normalized(allErrors,:) = [];
+% normalized(checkZeros,:) = [];
 normLabels = cell(1,length(storeLabels));
 for i = 1:length(storeLabels);
-    storeLabels{i}(checkZeros,:) = [];
+    storeLabels{i}(allErrors,:) = [];
+%     storeLabels{i}(checkZeros,:) = [];
 end
 
 normLabels = storeLabels;

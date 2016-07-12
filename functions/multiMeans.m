@@ -2,7 +2,12 @@
 % of the 'images' data struct. Usually will only be used inside
 % plotting functions which take 'images' as an input.
 
-function [GM,stdError] = multiMeans(d)
+function [GM,stdError] = multiMeans(d,varargin)
+
+params = struct(...
+    'errorType','SEM'...
+    );
+params = structInpParse(params,varargin);
 
 if size(d,2) == 3;
     error('Missing degrees of freedom data.');
@@ -25,6 +30,11 @@ GV = (TGSS + ESS)/(N-1); %total variance is a sum of int. and grand-mean varianc
                          %divided by (total samples - 1)
                          
 stdDev = sqrt(GV); %grand std deviation
-stdError = stdDev/sqrt(N);
+
+if strcmp(params.errorType,'SEM');
+    stdError = stdDev/sqrt(N);
+else
+    stdError = stdDev;
+end
 
 

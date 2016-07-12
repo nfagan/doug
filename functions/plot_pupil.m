@@ -5,16 +5,20 @@ doses = unique(storeLabels{4});
 params = struct(...
     'addErrorLines',[0],...
     'addStartLines',[1],...
-    'limits',[]...
+    'limits',[],...
+    'save',0, ...
+    'monkNames',[], ...
+    'binSize',50 ...
     );
 
 params = structInpParse(params,varargin);
 
-baseline = 200;
+baseline = 200 / params.binSize;
 
 startXCoords = [baseline;baseline];
 startYCoords = [.5 1.5];
 
+% figure('Visible','off');
 figure;
 hold on;
 stp = 1;
@@ -33,7 +37,8 @@ for k = 1:length(doses);
     if size(dist,1) > 1;
     
         meanPupil = nanmean(dist);
-        semPupil = [meanPupil + nanSEM(dist);meanPupil - nanSEM(dist)];
+%         semPupil = [meanPupil + nanSEM(dist);meanPupil - nanSEM(dist)];
+        semPupil = [meanPupil + std(dist);meanPupil - std(dist)];
         doseLegend{stp} = dose;
         
     elseif size(dist,1) == 1
@@ -57,10 +62,9 @@ for k = 1:length(doses);
     stp = stp+1;
 
     if params.addErrorLines
-        for j = 1:2;
-            if ~isempty(semPupil);
-                plot(xCoords(j,:),semPupil(j,:),'k','Linewidth',.1,'DisplayName','.');
-            end
+        if ~isempty(semPupil);
+%                 plot(xCoords(j,:),semPupil(j,:),'k','Linewidth',.1,'DisplayName','.');
+            plot(xCoords',semPupil','k','Linewidth',.1,'DisplayName','.');
         end
     end
 
@@ -69,7 +73,8 @@ for k = 1:length(doses);
 end
 
 % legend(doseLegend);
-legend('-DynamicLegend');
+h = legend('-DynamicLegend');
+set(h,'Location','North');
 
 if params.addStartLines;
     plot(startXCoords,startYCoords,'k','DisplayName','.');
@@ -78,6 +83,19 @@ end
 if ~isempty(params.limits);
     ylim(params.limits);
 end
+
+if params.save
+    cd('/Volumes/My Passport/NICK/Chang Lab 2016/doug/plots/fixed_plots');
+    if ~isempty(params.monkNames)
+        saveStr = sprintf('%s_%s_%s',params.monkNames,drug,image);
+    else
+        saveStr = sprintf('%s_%s',drug,image);
+    end
+    saveas(gcf,saveStr,'jpg');
+end
+
+
+    
 
         
         

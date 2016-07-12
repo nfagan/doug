@@ -5,13 +5,18 @@ global addPupilData;
 fullTime = 1500; %ms
 preImageTime = 200; %ms
 
-addFixEventPupilSize = 0;
-addFullTimeCourse = 1;
+add_time_course = 1;
+
+addFixEventPupilSize = 1; % if aiming to plot PSTH-style pupil plot, where t=0 is fixation-onset
+addFullTimeCourse = 1; % if looking from image onset -> image offset, irrespective of fix-events
+requireStartingFixation = 0; %if looking from image onset -> some threshold
 
 if addFullTimeCourse
     requireStartingFixation = 0;
-else
-    requireStartingFixation = 1;
+end
+
+if addFixEventPupilSize
+    addFullTimeCourse = 0;
 end
 
 if nargin < 3; %default values, if pos isn't specified
@@ -40,6 +45,9 @@ pupilSizePerImagePerFile = cell(1,length(wantedTimes));
 pupilSizePerFixEventPerFile = cell(1,length(wantedTimes));
 storePupilTimeCourse = [];
 
+store_fix_dur_time_course = cell(length(wantedTimes),1);
+store_fix_counts_time_course = cell(length(wantedTimes),1);
+
 for i = 1:length(wantedTimes);
     
     onePupil = pupil{i}.pupil;
@@ -56,7 +64,9 @@ for i = 1:length(wantedTimes);
     rowN = 1:length(fixStarts); %for indexing
     step = 1; %for saving per image
     newStp = 1; %for saving pupil data
+    stp3 = 1; % for saving time course of fixation counts and duration
     
+    baselinePupilSizePerFixEvent = cell(1,length(oneTimes));
     pupilSizePerFixEvent = cell(1,length(oneTimes));
     nFixationsPerImage = cell(1,length(oneTimes));
     fixEventDursPerImage = cell(1,length(oneTimes));
@@ -159,6 +169,59 @@ for i = 1:length(wantedTimes);
                     end
                 end
                 
+                if add_time_course
+                    if ~isempty(checkBounds);
+                        addFixEventPupilSize = 0;
+                        time_vector = startEndTimes(1):startEndTimes(2);
+
+                        fixation_counts_time_course = zeros(1,length(time_vector));
+                        event_duration_time_course = zeros(1,length(time_vector));
+
+                        fixEvents(~checkBounds,:) = []; %discard out-of-bounds fixEvents
+
+                        for ti = 1:size(fixEvents,1);
+                            fixation_counts_time_course(time_vector == fixEvents(ti)) = 1;
+                            event_duration_time_course(time_vector == fixEvents(ti)) = allDurs(ti);
+                        end                    
+
+                        store_fix_counts_time_course{i}{stp3,1} = fixation_counts_time_course;
+                        store_fix_dur_time_course{i}{stp3,1} = event_duration_time_course;
+                        stp3 = stp3+1;
+                    end 
+                end
+                
+                if addFixEventPupilSize && addPupilData % if getting pupil data per fixation event, with some time-lag
+                    fixEvents(~checkBounds,:) = []; %discard out-of-bounds fixEvents
+                    fixEventPups = cell(length(fixEvents),1); %preallocate cells based on N Fix Events within bounds
+                    baselinePup = cell(length(fixEvents),1);
+                    for ll = 1:size(fixEvents,1); %for each fix event ...
+                        %get pupil size from fixEventStart -> 
+                        % fixEventStart + pupilDurThreshold; last input as
+                        % 0 indicates that the start time isn't adjusted
+%                         disp([length(fixEvents) ll fixEvents(2) max(onePupil(:,1)) min(onePupil(:,1))]);
+                        fixEventPups{ll}(1,:) = getPupilSize(...
+                            onePupil,[fixEvents(ll,1) (fixEvents(ll,1)+pupilDurThreshold-1)],0);
+                        if ll == 1; %to save time, only get baseline-size on first loop
+                            baselinePup{ll}(1,:) = getPupilSize(... %get the baseline period pupil data
+                                onePupil,[(startEndTimes(1)-preImageTime+1) startEndTimes(1)],0);
+                        else
+                            baselinePup{ll} = baselinePup{1};
+                        end
+                    end
+                    
+                    fixEventPups = concatenateData(fixEventPups); %reformat fix-event pupil data
+                    baselinePup = concatenateData(baselinePup); %reformat baseline pupil data
+                    fixEventPups(:,end+1) = i; %add session id
+                    fixEventPups = [baselinePup fixEventPups]; %add baseline data to fixEventPup
+                    baselinePup(:,end+1) = i;
+                    pupilSizePerFixEvent{step} = fixEventPups;  %store fix event size per image
+                    baselinePupilSizePerFixEvent{step} = baselinePup; %store baseline size per image
+
+                    else 
+                        pupilSizePerFixEvent{step} = [allPup repmat(i,length(allPup),1)];
+                        baselinePupilSizePerFixEvent{step} = [NaN i];
+                end
+                
                 nFixationsPerImage{j} = [length(allPup) i];
                 meanDurFixEventPerImage{j} = mean(allDurs);
                 semDurFixEventPerImage{j} = [SEM(allDurs) (std(allDurs))^.2 length(allDurs) i];
@@ -166,20 +229,6 @@ for i = 1:length(wantedTimes);
                 durPerImage{step} = [sum(allDurs) i];
                 pupilPerImage{step} = [mean(allPup) SEM(allPup) (std(allPup))^.2 length(allPup) i];
                 step = step+1;
-                
-                if addFixEventPupilSize && addPupilData % if getting pupil data per fixation event, with some time-lag
-                    fixEventPups = cell(length(fixEvents),1);
-                    for ll = 1:length(fixEvents);
-                        fixEventPups{ll} = getPupilSize(onePupil,fixEvents(ll,:),150); %adjust start time of fixation event to be 150ms to allow 
-                    end
-
-                    fixEventPups = concatenateData(fixEventPups);
-                    fixEventPups(:,2) = i;
-                    pupilSizePerFixEvent{step} = fixEventPups;
-
-                    else 
-                        pupilSizePerFixEvent{step} = [allPup repmat(i,length(allPup),1)];
-                end
 
             else
                 nFixationsPerImage{j} = [NaN NaN];
@@ -230,6 +279,7 @@ for i = 1:length(wantedTimes);
     
     pupilSizePerImagePerFile{i} = concatenateData(pupilSizePerImage);
     pupilSizePerFixEventPerFile{i} = concatenateData(pupilSizePerFixEvent);
+    baselinePupilSizePerFixEventPerFile{i} = concatenateData(baselinePupilSizePerFixEvent);
     
 %     [dursPerImage,sizePerImage,nFixPerImage,firstLookPerImage,patchResidencePerImage] = ...
 %         concatenateData(dursPerImage,sizePerImage,nFixPerImage,firstLookPerImage,patchResidencePerImage);
@@ -247,7 +297,17 @@ for i = 1:length(wantedTimes);
     
 end
 
+%%% fix event counts and duration time course
+
+fix_counts_time_course = concatenateData(concatenateData(...
+    store_fix_counts_time_course));
+
+fix_dur_time_course = concatenateData(concatenateData(...
+    store_fix_dur_time_course));
+
 %%% new outputs
+
+baselinePupilSizePerFixEventPerFile = concatenateData(baselinePupilSizePerFixEventPerFile);
 
 pupilSizePerImagePerFile = concatenateData(pupilSizePerImagePerFile);
 
@@ -277,18 +337,27 @@ data.meanDurationFixEventPerImage = [meanDurFixEventPerImagePerFile semDurFixEve
 data.lookingDuration = durPerImagePerFile;
 data.fixEventDuration = fixEventDursPerImagePerFile;
 
-% for n = 1:length(unique(durPerImagePerFile(:,2)));
-%     nImagesPerSession(n,:) = [length(durPerImagePerFile(durPerImagePerFile(:,2) == n,:)) n];
-% end
-nImagesPerSession = NaN;
+if size(durPerImagePerFile,2) > 1;
+    for n = 1:length(unique(durPerImagePerFile(:,2)));
+        nImagesPerSession(n,:) = [size(durPerImagePerFile(durPerImagePerFile(:,2) == n),1) n];
+    end
+else
+    nImagesPerSession = [NaN NaN];
+end
 
 data.nImagesPerSession = nImagesPerSession;
 data.pupilSize = pupilSizePerImagePerFile;
 data.pupilSizePerFixEvent = pupilSizePerFixEventPerFile;
+data.baselinePupilSizePerFixEvent = baselinePupilSizePerFixEventPerFile;
 
 storePupilTimeCourse = [storePupilTimeCourse ones(size(storePupilTimeCourse,1),1)];
 storePupilTimeCourse(isnan(storePupilTimeCourse(:,1)),:) = [];
 % data.pupilTimeCourse = [storePupilTimeCourse ones(size(storePupilTimeCourse,1),1)];
 data.pupilTimeCourse = storePupilTimeCourse;
 
-end %end monkey number loop
+%%% add new time course outputs
+
+data.fix_counts_time_course = fix_counts_time_course;
+data.fix_dur_time_course = fix_dur_time_course;
+
+end %end function

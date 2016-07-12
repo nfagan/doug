@@ -67,9 +67,9 @@ for i = 1:n_images;
                 extr_vals = separate_data(values,labels,...
                     'drugs',{drugs{j}},'images',{images{i}},'doses',{doses{k}});
 
-                if strcmp(toExamine,'nImages') %special case -- sum nImages, if there're multiple blocks
-                    extr_vals = sum(extr_vals);
-                end
+%                 if strcmp(toExamine,'nImages') %special case -- sum nImages, if there're multiple blocks
+%                     extr_vals = sum(extr_vals);
+%                 end
 
                 means(k) = mean(extr_vals);
                 sems(k) = SEM(extr_vals);

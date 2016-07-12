@@ -1,10 +1,12 @@
 %%
+tic
 startDir = '/Volumes/My Passport/NICK/Chang Lab 2016/repositories/doug';
 cd(startDir);
 %
 % --------------------------------
 % -- define global variables --
 % --------------------------------
+
 
 global addPupilData;
 global pupil;
@@ -25,7 +27,8 @@ global region;
 % --------------------------------
 compName = 'nick';
 analysisVersion = 'new'; %or 'old'
-addPupilData = 1;
+addPupilData = 0;
+saveOutput = 0;
 
 % monkeys = {'Lager'};
 % monkeys = {'Joda'};
@@ -41,12 +44,13 @@ dosages = {'small','medium','large','saline'};
 region = 'image'; %image, screen, eyes
 allPos = lookingCoords;
 
-allBlockStarts = [0 300e4 600e4 900e4];
-allBlockEnds = allBlockStarts(:) + 300e4;
-% allBlockStarts = 0;
-% allBlockEnds = 1000e5;
+% allBlockStarts = [0 300e4 600e4 900e4];
+% allBlockEnds = allBlockStarts(:) + 300e4;
+allBlockStarts = 0;
+allBlockEnds = 1000e5;
 
 allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'};
+% allTrialTypes = {'people'};
 
 % --------------------------------
 % -- get data and data ids --
@@ -55,14 +59,19 @@ allTrialTypes = {'scrambled','people','monkeys','outdoors','animals'};
 if strcmp(analysisVersion,'old');
     [allSaveData] = analysisPortion2;
 elseif strcmp(analysisVersion,'new');
-    [new_saveData,labels] = analysisPortion2;
+%     [new_saveData,labels] = analysisPortion2;
+    [new_saveData,orig_labels] = analysisPortion2;
 end
 
+if saveOutput
 % cd('/Volumes/My Passport/for_doug/for_doug2');
 cd('/Volumes/My Passport/NICK/Chang Lab 2016/doug/pupil_stuff');
-saveStr = sprintf('%s.mat',region);
-
+% saveStr = sprintf('%s.mat',region);
+saveStr = sprintf('%s_new_run.mat',region);
 save(saveStr,'new_saveData','labels');
+end
+
+toc
 
 %%
 toExamine = 'nImages';

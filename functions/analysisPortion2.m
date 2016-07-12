@@ -32,6 +32,7 @@ for ii = 1:length(monkeys); % for each monkey ...
             % -- load in files --
             [umbrellaDirectory,doseNames{k}] = getUmbrDir(monkey,drugTypes{j},dosages{k});
             [allTimes,allEvents,pupil] = getFilesDoug(umbrellaDirectory); % load all files
+            
             % -- get all relevant data --
             wantedTimes = getTrials(allTimes,trialType); %only output the display times associated with the images we're interested in
             step = 1;

@@ -4,6 +4,8 @@ monkeys = unique(storeLabels{1});
 allTrialTypes = unique(storeLabels{2});
 drugTypes = unique(storeLabels{3});
 dosages = unique(storeLabels{4});
+storedBlocks = unique(storeLabels{5});
+uniq_sessions = unique(storeLabels{6});
 
 % global monkeys;
 % global drugTypes;
@@ -31,7 +33,7 @@ sessions = params.sessions;
 
 % nBlocks = max(str2num(cell2mat(unique(storeLabels{5})))); %block data is 5th column of storeLabels
 nBlocks = length(unique(storeLabels{5}));
-nSessions = max(storeLabels{6}); %session data is 6th column of storeLabels
+% nSessions = max(storeLabels{6}); %session data is 6th column of storeLabels
 
 % -- parse desired variables
 
@@ -60,13 +62,15 @@ else
 end
 
 if strcmp(blocks,'all');
-    wantedBlocks = 1:nBlocks;
+%     wantedBlocks = 1:nBlocks;
+    wantedBlocks = storedBlocks;
 else
     wantedBlocks = blocks;
 end
 
 if strcmp(sessions,'all');
-    wantedSessions = 1:nSessions;
+%     wantedSessions = 1:nSessions;
+    wantedSessions = uniq_sessions;
 else
     wantedSessions = sessions;
 end

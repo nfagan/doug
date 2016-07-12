@@ -94,4 +94,7 @@ end
 
 if nargout > 2;
     varargout{1} = pupil;
+elseif nargout > 3;
+    varargout{1} = pupil;
+    varargout{2} = idNumbers;
 end

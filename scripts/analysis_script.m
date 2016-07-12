@@ -1,43 +1,51 @@
+cd('/Volumes/My Passport/NICK/Chang Lab 2016/doug/pupil_stuff');
+
+load('image.mat');
+
 %% - extract data
 global toExamine;
-toExamine = 'fixEventDuration';
+toExamine = 'lookingDuration';
 [storeValues,storeLabels] = extract_data(new_saveData,labels);
 
-%%
+%% optionally extract one monkey
 
-joda = separate_data(storeValues,storeLabels,'monkeys',{'Joda'});
-coppola = separate_data(storeValues,storeLabels,'monkeys',{'Coppola'});
-lager = separate_data(storeValues,storeLabels,'monkeys',{'Lager'});
+[storeValues,storeLabels] = separate_data(storeValues,storeLabels,'monkeys',{'Lager'});
 
-%%
+%% normalize
 
-joda = mean(joda);
-coppola = mean(coppola);
-lager = mean(lager);
+[normed,normLabels] = norm_by(storeValues,storeLabels,'saline');
 
-%% 2 sample t-test
-[n_vals,~] = separate_data(storeValues,storeLabels,'drugs',{'N'});
-[ot_vals,~] = separate_data(storeValues,storeLabels,'drugs',{'OT'});
+%% N-way nested ANOVA
 
-nMeans = n_vals(:,1);
-otMeans = ot_vals(:,1);
+[normed,normLabels] = separate_data(normed,normLabels,'images',{'people','monkeys','scrambled'});
 
-[~,p,ci,stats] = ttest2(nMeans,otMeans); %two sample t-test
+monkLabels = normLabels{1};
+imageLabels = normLabels{2}; %extract individual grouping variables
+drugLabels = normLabels{3};
+doseLabels = normLabels{4};
+blockLabels = normLabels{5};
 
-%% N-way Anova
+nestingMatrix(1,:) = [0,0,0]; %don't nest FIRST grouping variable in anything
+nestingMatrix(2,:) = [1,0,0]; %nest SECOND grouping variable in first, only
+nestingMatrix(3,:) = [1,1,0]; %nest THIRD grouping variable in first AND second
 
-[n_values,n_labels] = separate_data(storeValues,storeLabels,'drugs',{'N'},'doses',{'all'},'blocks','all');
+[p,tbl,stats] = anovan(normed,{imageLabels,drugLabels,doseLabels},... %add grouping variables here
+    'model','interaction','varnames',{'Image','Drug','Dose'},'nested',nestingMatrix); %change variable names here
 
-[all_values,all_labels] = separate_data(storeValues,storeLabels,'drugs',{'all'},'doses',{'all'},'blocks','all');
+results = multcompare(stats);
 
-monkLabels = all_labels{1};
-imageLabels = all_labels{2};
-drugLabels = all_labels{3};
-doseLabels = all_labels{4};
+%% N-way non-nested ANOVA
+
+% [extrValues,extrLabels] = separate_data(normed,normLabels,'images',{'people'});
+[extrValues,extrLabels] = separate_data(storeValues,storeLabels,'images',{'people'});
+
+monkLabels = extrLabels{1};
+imageLabels = extrLabels{2}; %extract individual grouping variables
+drugLabels = extrLabels{3};
+doseLabels = extrLabels{4};
 blockLabels = all_labels{5};
-sessLabels = all_labels{6};
 
-%%
-% [p,~,stats] = anovan(n_values(:,1),{doseLabels,imageLabels},'model','interaction','varnames',{'Dose','Image Type'});
-[p,tbl,stats] = anovan(all_values(:,1),{drugLabels,doseLabels,imageLabels},'model','interaction','varnames',{'Drugs','Dose','Image Type'});
-% results = multcompare(stats,'dimension',[1 2]);
+[p,tbl,stats] = anovan(extrValues,{drugLabels,doseLabels},...
+    'model','interaction','varnames',{'Drug','Dose'});
+
+results = multcompare(stats,'dimension',[1,2]);
